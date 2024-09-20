@@ -101,7 +101,7 @@ jobs:
       - name: Run the Action
         uses: devops-infra/action-pull-request@v0.4.2
         with:
-          github_token: ${{ secrets.RELEASE_GH_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           source_branch: ${{ env.RELEASE_BRANCH}}
           target_branch: main
           title: ":rocket: ${{ env.RELEASE_VERSION}}"
