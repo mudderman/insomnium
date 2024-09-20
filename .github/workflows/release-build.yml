@@ -149,50 +149,50 @@ jobs:
   #       packages/insomnia/build/*.map
   #       !packages/insomnia/build/yarn-standalone.js
 
-  update-pull-request:
-    needs: build-and-upload-release-artifacts
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get release version
-        id: release_version
-        shell: bash
-        run: |
-          echo "version=${BRANCH/release\//}" >> $GITHUB_OUTPUT
-        env:
-          BRANCH: ${{ github.ref_name }}
+  # update-pull-request:
+  #   needs: build-and-upload-release-artifacts
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Get release version
+  #       id: release_version
+  #       shell: bash
+  #       run: |
+  #         echo "version=${BRANCH/release\//}" >> $GITHUB_OUTPUT
+  #       env:
+  #         BRANCH: ${{ github.ref_name }}
 
-      - name: update-pull-request
-        uses: kt3k/update-pr-description@v2.0.0
-        with:
-          pr_body: |
-            Download release artifacts [here](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+  #     - name: update-pull-request
+  #       uses: kt3k/update-pr-description@v2.0.0
+  #       with:
+  #         pr_body: |
+  #           Download release artifacts [here](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
-            ## Steps for Publish:
+  #           ## Steps for Publish:
 
-            When ready to publish, trigger [Publish](https://github.com/${{ github.repository }}/actions/workflows/release-publish.yml) workflow with these variables:
-            - Release version (`version`): `${{ steps.release_version.outputs.version }}`
+  #           When ready to publish, trigger [Publish](https://github.com/${{ github.repository }}/actions/workflows/release-publish.yml) workflow with these variables:
+  #           - Release version (`version`): `${{ steps.release_version.outputs.version }}`
 
-            Alternatively, you can trigger the workflow from [Github CLI](https://cli.github.com/):
-            ```bash
-            gh workflow run release-publish.yml -f version=${{ steps.release_version.outputs.version }} --repo ${{ github.repository }}
-            ```
+  #           Alternatively, you can trigger the workflow from [Github CLI](https://cli.github.com/):
+  #           ```bash
+  #           gh workflow run release-publish.yml -f version=${{ steps.release_version.outputs.version }} --repo ${{ github.repository }}
+  #           ```
 
-            <details>
-            <summary>Conflicts? Merge branch step failed on the publish workflow? Try this...</summary>
+  #           <details>
+  #           <summary>Conflicts? Merge branch step failed on the publish workflow? Try this...</summary>
 
-            Run locally:
+  #           Run locally:
 
-            ```bash
-            # Make sure git remote is ArchGPT/insomnium...
+  #           ```bash
+  #           # Make sure git remote is ArchGPT/insomnium...
 
-            git checkout main
-            git merge --no-ff release/<replaced with version>
+  #           git checkout main
+  #           git merge --no-ff release/<replaced with version>
 
-            # Solve merge conflicts ...
-            # If there's package-lock conflicts, run `npm install` and commit the package-lock changes
+  #           # Solve merge conflicts ...
+  #           # If there's package-lock conflicts, run `npm install` and commit the package-lock changes
 
-            git push
-            ```
-            </details>
-          destination_branch: main
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+  #           git push
+  #           ```
+  #           </details>
+  #         destination_branch: main
+  #         github_token: ${{ secrets.GITHUB_TOKEN }}
