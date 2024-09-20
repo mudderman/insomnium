@@ -318,12 +318,9 @@ export async function getRenderContext(
 
   const project = ancestors.find(isProject);
   const workspace = ancestors.find(isWorkspace);
-  if (!workspace) {
-    throw new Error('Failed to render. Could not find workspace');
-  }
-
+  const workspaceId = workspace?._id || window.insomniaData.workspaceId || 'n/a';
   const rootEnvironment = await models.environment.getOrCreateForParentId(
-    workspace ? workspace._id : 'n/a',
+    workspaceId
   );
   const subEnvironment = await models.environment.getById(environmentId || 'n/a');
   const keySource: Record<string, string> = {};
@@ -470,7 +467,10 @@ export async function getRenderedRequestAndContext(
 ): Promise<RequestAndContext> {
   const ancestors = await getRenderContextAncestors(request);
   const workspace = ancestors.find(isWorkspace);
-  const parentId = workspace ? workspace._id : 'n/a';
+  let parentId = workspace ? workspace._id : 'n/a';
+  if (parentId === 'n/a') {
+    parentId = window.insomniaData.workspaceId;
+  }
   const cookieJar = await models.cookieJar.getOrCreateForParentId(parentId);
   const renderContext = await getRenderContext({ request, environmentId, ancestors, purpose, extraInfo });
 

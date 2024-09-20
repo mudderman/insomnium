@@ -46,7 +46,10 @@ export const fetchRequestData = async (requestId: string) => {
     models.workspace.type,
   ]);
   const workspaceDoc = ancestors.find(isWorkspace);
-  const workspaceId = workspaceDoc ? workspaceDoc._id : 'n/a';
+  let workspaceId = workspaceDoc ? workspaceDoc._id : 'n/a';
+  if (workspaceId === 'n/a') {
+    workspaceId = window.insomniaData.workspaceId;
+  }
   const workspace = await models.workspace.getById(workspaceId);
   guard(workspace, 'failed to find workspace');
   const workspaceMeta = await models.workspaceMeta.getOrCreateByParentId(workspace._id);

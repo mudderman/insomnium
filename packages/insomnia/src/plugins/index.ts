@@ -78,6 +78,8 @@ export interface WorkspaceAction extends InternalProperties {
   ) => void | Promise<void>;
   label: string;
   icon?: string;
+  isGroup?: boolean;
+  subactions?: WorkspaceAction[];
 }
 
 export interface DocumentAction extends InternalProperties {
@@ -343,7 +345,8 @@ export async function getRequestHooks(): Promise<RequestHook[]> {
           console.log(`[header] Set default header ${name}: ${value}`);
         }
       }
-    } }];
+    }
+  }];
 
   for (const plugin of await getActivePlugins()) {
     const moreFunctions = plugin.module.requestHooks || [];

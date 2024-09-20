@@ -1,6 +1,6 @@
 import { ExtraRenderInfo, RENDER_PURPOSE_SEND } from '../../common/render';
 import * as models from '../../models';
-import type { Request } from '../../models/request';
+import { create, type Request } from '../../models/request';
 import { fetchRequestData, responseTransform, sendCurlAndWriteTimeline, tryToInterpolateRequest, tryToTransformRequestWithPlugins } from '../../network/network';
 
 export function init() {
@@ -25,6 +25,16 @@ export function init() {
         const responsePatch = await responseTransform(response, activeEnvironmentId, renderedRequest, renderResult.context);
         return models.response.create(responsePatch, settings.maxHistoryResponses);
       },
+      async send(partial?: Partial<Request>) {
+        const req = {
+          ...partial,
+          isPrivate: true,
+          parentId: "dummy_parent_id",
+          method: partial?.method || "GET"
+        }
+        let request = await create(req);
+        return await this.sendRequest(request);
+      }
     },
   };
 }

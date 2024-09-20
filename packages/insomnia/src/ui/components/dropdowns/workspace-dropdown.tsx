@@ -25,6 +25,13 @@ import { WorkspaceSettingsModal } from '../modals/workspace-settings-modal';
 
 console.log("[configGenerators] ", configGenerators);
 
+declare global {
+  interface Window {
+    insomniaContext: any;
+    insomniaData: any;
+  }
+}
+
 export const WorkspaceDropdown: FC = () => {
   const { organizationId, projectId, workspaceId } = useParams<{ organizationId: string; projectId: string; workspaceId: string }>();
   guard(organizationId, 'Expected organizationId');
@@ -49,6 +56,16 @@ export const WorkspaceDropdown: FC = () => {
   const [actionPlugins, setActionPlugins] = useState<WorkspaceAction[]>([]);
   const [loadingActions, setLoadingActions] = useState<Record<string, boolean>>({});
   const dropdownRef = useRef<DropdownHandle>(null);
+
+  // Set the pluginContext.app and pluginContext.network on the window object
+  const insomniaContext = {
+    ...(pluginContexts.app.init(RENDER_PURPOSE_NO_RENDER) as Record<string, any>),
+    ...(pluginContexts.network.init() as Record<string, any>)
+  };
+  window.insomniaContext = insomniaContext;
+  window.insomniaData = {
+    workspaceId: workspaceId
+  };
 
   const handlePluginClick = useCallback(async ({ action, plugin, label }: WorkspaceAction, workspace: Workspace) => {
     setLoadingActions({ ...loadingActions, [label]: true });
@@ -162,13 +179,13 @@ export const WorkspaceDropdown: FC = () => {
             />
           </DropdownItem>
 
-        <DropdownItem aria-label='Export'>
-          <ItemContent
-            icon="file-export"
-            label="Export"
-            onClick={() => setIsExportModalOpen(true)}
-          />
-        </DropdownItem>
+          <DropdownItem aria-label='Export'>
+            <ItemContent
+              icon="file-export"
+              label="Export"
+              onClick={() => setIsExportModalOpen(true)}
+            />
+          </DropdownItem>
 
           <DropdownItem aria-label="Settings">
             <ItemContent
@@ -178,7 +195,8 @@ export const WorkspaceDropdown: FC = () => {
             />
           </DropdownItem>
         </DropdownSection>
-        <DropdownSection
+        {/* NOTE: This means that other plugins workspace actions won't show up */}
+        {/* <DropdownSection
           aria-label='Plugins Section'
           title="Plugins"
         >
@@ -195,7 +213,30 @@ export const WorkspaceDropdown: FC = () => {
               />
             </DropdownItem>
           ))}
-        </DropdownSection>
+        </DropdownSection> */}
+        {actionPlugins.map((p: WorkspaceAction) => {
+          return (
+            <DropdownSection
+              aria-label={p.label}
+              title={p.label}
+              key={p.label}
+            >
+              {p.subactions?.map((s: WorkspaceAction) => (
+                <DropdownItem
+                  key={s.label}
+                  aria-label={s.label}
+                >
+                  <ItemContent
+                    icon={loadingActions[s.label] ? 'refresh fa-spin' : s.icon || 'fa-null'}
+                    label={s.label}
+                    stayOpenAfterClick
+                    onClick={() => handlePluginClick(s, activeWorkspace)}
+                  />
+                </DropdownItem>
+              ))}
+            </DropdownSection>
+          );
+        })}
 
       </Dropdown>
       {isDuplicateModalOpen && (

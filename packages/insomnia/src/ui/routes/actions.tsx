@@ -855,6 +855,15 @@ export const setActiveEnvironmentAction: ActionFunction = async ({
 
   await models.workspaceMeta.update(workspaceMeta, { activeEnvironmentId: environmentId || null });
 
+  // Send an event to the window indicating the environment was changed
+  const event = new InputEvent('environmentChanged', {
+    view: window,
+    bubbles: true,
+    cancelable: true
+  });
+
+  window.dispatchEvent(event);
+
   return null;
 };
 
@@ -942,7 +951,7 @@ const getCollectionItem = async (id: string) => {
 };
 
 export const reorderCollectionAction: ActionFunction = async ({ request, params }) => {
-  const { workspaceId }  = params;
+  const { workspaceId } = params;
   guard(typeof workspaceId === 'string', 'Workspace ID is required');
   const { id, targetId, dropPosition, metaSortKey } = await request.json();
   guard(typeof id === 'string', 'ID is required');
