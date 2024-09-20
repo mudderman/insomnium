@@ -345,7 +345,7 @@ export async function getRequestHooks(): Promise<RequestHook[]> {
           console.log(`[header] Set default header ${name}: ${value}`);
         }
       }
-    }
+    },
   }];
 
   for (const plugin of await getActivePlugins()) {

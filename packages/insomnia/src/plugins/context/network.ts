@@ -30,11 +30,11 @@ export function init() {
           ...partial,
           isPrivate: true,
           parentId: "dummy_parent_id",
-          method: partial?.method || "GET"
+          method: partial?.method || "GET",
         }
-        let request = await create(req);
+        const request = await create(req);
         return await this.sendRequest(request);
-      }
+      },
     },
   };
 }

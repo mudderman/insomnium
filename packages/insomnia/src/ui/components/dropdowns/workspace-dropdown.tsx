@@ -60,11 +60,11 @@ export const WorkspaceDropdown: FC = () => {
   // Set the pluginContext.app and pluginContext.network on the window object
   const insomniaContext = {
     ...(pluginContexts.app.init(RENDER_PURPOSE_NO_RENDER) as Record<string, any>),
-    ...(pluginContexts.network.init() as Record<string, any>)
+    ...(pluginContexts.network.init() as Record<string, any>),
   };
   window.insomniaContext = insomniaContext;
   window.insomniaData = {
-    workspaceId: workspaceId
+    workspaceId: workspaceId,
   };
 
   const handlePluginClick = useCallback(async ({ action, plugin, label }: WorkspaceAction, workspace: Workspace) => {

@@ -859,7 +859,7 @@ export const setActiveEnvironmentAction: ActionFunction = async ({
   const event = new InputEvent('environmentChanged', {
     view: window,
     bubbles: true,
-    cancelable: true
+    cancelable: true,
   });
 
   window.dispatchEvent(event);
