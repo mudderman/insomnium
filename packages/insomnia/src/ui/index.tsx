@@ -8,6 +8,16 @@ import * as models from '../models';
 
 import { renderApp } from './renderApp';
 
+declare global {
+  interface Window {
+    insomniaContext: any;
+    insomniaData: any;
+    onEnvironmentChanged?: () => {};
+    onApplicationLoaded?: () => {};
+    onPluginLoaded?: (pluginName: string) => {};
+  }
+}
+
 renderApp();
 
 // Export some useful things for dev

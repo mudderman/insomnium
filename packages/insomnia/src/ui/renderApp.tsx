@@ -21,43 +21,43 @@ export async function renderApp() {
 
   // initalize a new req manually on user's first run
   if (!prevLocationHistoryEntry) {
-  const workspaceNumber = await database.count<Workspace>(models.workspace.type);
-  console.log("workspaces detected ~>", workspaceNumber);
+    const workspaceNumber = await database.count<Workspace>(models.workspace.type);
+    console.log("workspaces detected ~>", workspaceNumber);
 
-  if (workspaceNumber === 0) {
-    const [d] = dummyStartingWorkspace();
-    const newObj = await importPure(d) as {
-      resources: { resources: models.BaseModel[] }[];
-    };
+    if (workspaceNumber === 0) {
+      const [d] = dummyStartingWorkspace();
+      const newObj = await importPure(d) as {
+        resources: { resources: models.BaseModel[] }[];
+      };
 
-    const r = (newObj.resources?.[0]?.resources as BaseModel[]).find(a => a.type === "Request");
-    const w = (newObj.resources?.[0]?.resources as BaseModel[]).find(a => a.type === "Workspace");
-    const e = (newObj.resources?.[0]?.resources as BaseModel[]).find(a => a.type === "Environment");
-    if (w && r && e) {
-      wId = w._id;
-      beginningPathForFirstTimeUser = `/organization/org_default-project/project/proj_default-project/workspace/${w._id}/debug/request/${r._id}`;
+      const r = (newObj.resources?.[0]?.resources as BaseModel[]).find(a => a.type === "Request");
+      const w = (newObj.resources?.[0]?.resources as BaseModel[]).find(a => a.type === "Workspace");
+      const e = (newObj.resources?.[0]?.resources as BaseModel[]).find(a => a.type === "Environment");
+      if (w && r && e) {
+        wId = w._id;
+        beginningPathForFirstTimeUser = `/organization/org_default-project/project/proj_default-project/workspace/${w._id}/debug/request/${r._id}`;
 
-      const defaultProject = await models.project.getById('proj_default-project');
+        const defaultProject = await models.project.getById('proj_default-project');
 
-      if (!defaultProject) {
- (await models.project.create({
-          _id: 'proj_default-project',
-          name: getProductName(),
-          remoteId: null,
-        }));
-}
+        if (!defaultProject) {
+          (await models.project.create({
+            _id: 'proj_default-project',
+            name: getProductName(),
+            remoteId: null,
+          }));
+        }
 
-      eId = e._id;
-      console.log("META DESU->", w._id, beginningPathForFirstTimeUser);
-      const id = await models.workspaceMeta.getByParentId(w._id);
-      if (!id) {
-        const activeWorkspaceMeta = await models.workspaceMeta.getOrCreateByParentId(w._id, {
-          activeEnvironmentId: eId,
-        });
+        eId = e._id;
+        console.log("META DESU->", w._id, beginningPathForFirstTimeUser);
+        const id = await models.workspaceMeta.getByParentId(w._id);
+        if (!id) {
+          const activeWorkspaceMeta = await models.workspaceMeta.getOrCreateByParentId(w._id, {
+            activeEnvironmentId: eId,
+          });
+        }
       }
-    }
 
-  }
+    }
 
   }
 
@@ -78,5 +78,9 @@ export async function renderApp() {
   ReactDOM.createRoot(root).render(
     <RouterProvider router={router} />
   );
+
+  if (window.onApplicationLoaded) {
+    window.onApplicationLoaded();
+  }
 
 }

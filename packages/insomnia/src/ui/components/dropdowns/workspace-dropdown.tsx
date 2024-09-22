@@ -25,14 +25,6 @@ import { WorkspaceSettingsModal } from '../modals/workspace-settings-modal';
 
 console.log("[configGenerators] ", configGenerators);
 
-declare global {
-  interface Window {
-    insomniaContext: any;
-    insomniaData: any;
-    onEnvironmentChanged?: () => {};
-  }
-}
-
 export const WorkspaceDropdown: FC = () => {
   const { organizationId, projectId, workspaceId } = useParams<{ organizationId: string; projectId: string; workspaceId: string }>();
   guard(organizationId, 'Expected organizationId');

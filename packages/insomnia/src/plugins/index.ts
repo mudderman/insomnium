@@ -168,6 +168,9 @@ async function _traversePluginPath(
             : { disabled: false },
           module: module,
         };
+        if (window.onPluginLoaded) {
+          window.onPluginLoaded(pluginJson.name);
+        }
         console.log(`[plugin] Loaded ${modulePath}`);
       } catch (err) {
         showError({
