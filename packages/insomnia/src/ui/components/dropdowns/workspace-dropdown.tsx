@@ -29,6 +29,7 @@ declare global {
   interface Window {
     insomniaContext: any;
     insomniaData: any;
+    onEnvironmentChanged?: () => {};
   }
 }
 

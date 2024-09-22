@@ -855,14 +855,10 @@ export const setActiveEnvironmentAction: ActionFunction = async ({
 
   await models.workspaceMeta.update(workspaceMeta, { activeEnvironmentId: environmentId || null });
 
-  // Send an event to the window indicating the environment was changed
-  const event = new InputEvent('environmentChanged', {
-    view: window,
-    bubbles: true,
-    cancelable: true,
-  });
-
-  window.dispatchEvent(event);
+  // If the environment was changed and there's a listener method definde, call it
+  if (window.onEnvironmentChanged) {
+    window.onEnvironmentChanged();
+  }
 
   return null;
 };
