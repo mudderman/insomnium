@@ -105,8 +105,7 @@ export const createRequestAction: ActionFunction = async ({ request, params }) =
     activeRequestId = (await models.request.create({
       parentId: parentId || workspaceId,
       method: METHOD_GET,
-      name: 'New Request',
-      headers: [{ name: 'User-Agent', value: `insomnium/${version}` }],
+      name: req?.name || 'New Request',
     }))._id;
   }
   if (requestType === 'gRPC') {

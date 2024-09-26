@@ -531,9 +531,20 @@ export const Debug: FC = () => {
         icon: 'plus-circle',
         hint: hotKeyRegistry.request_createHTTP,
         action: () =>
-          createRequest({
-            requestType: 'HTTP',
-            parentId: workspaceId,
+          showPrompt({
+            title: 'New Request',
+            defaultValue: 'My Request',
+            submitName: 'Create',
+            label: 'Name',
+            selectText: true,
+            onComplete: name =>
+              createRequest({
+                requestType: 'HTTP',
+                parentId: workspaceId,
+                req: {
+                  name: name
+                }
+              }),
           }),
       },
       {
